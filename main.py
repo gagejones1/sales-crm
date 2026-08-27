@@ -174,3 +174,63 @@ def delete_company(
     db.commit()
 
     return {"message": "Company has been deleted!!"}
+
+
+
+# --------------------------------------
+# Company Endpoints
+#---------------------------------------
+@app.get("/contacts")
+def get_contacts(db: Session = Depends(get_db)):
+    return db.query(models.Contact).all()
+
+@app.post("/contacts")
+def create_contact(contact: dict, db: Session = Depends(get_db)):
+    new_contact = models.Contact(
+        name=contact["name"],
+        email=contact["email"],
+        company_id=contact["company_id"]
+    )
+
+    db.add(new_contact)
+    db.commit()
+    db.refresh(new_contact)
+
+    return new_contact
+
+
+@app.get("/contacts/{contact_id}")
+def get_contact(contact_id: int, db: Session = Depends(get_db)):
+    contact = db.query(models.Contact).filter(
+        models.Contact.id == contact_id
+    ).first()
+
+    return contact
+
+
+@app.patch("/contacts/{contact_id}")
+def update_contact(
+    contact_id: int,
+    updated_contact: dict,
+    db: Session = Depends(get_db)
+):
+
+    contact = db.query(models.Contact).filter(
+        models.Contact.id == contact_id
+    ).first()
+
+    if "name" in updated_contact:
+        contact.name = updated_contact["name"]
+
+    if "email" in updated_contact:
+        contact.email = updated_contact["email"]
+
+    if "company_id" in updated_contact:
+        contact.company_id = updated_contact["company_id"]
+
+    db.commit()
+    db.refresh(contact)
+
+    return contact
+
+
