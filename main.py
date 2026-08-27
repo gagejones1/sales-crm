@@ -26,6 +26,14 @@ customers =[
     {"id": 2, "name": "Microsoft"}
 ]
     
+
+
+
+
+# --------------------------------------
+# Customer Endpoints
+#---------------------------------------
+
 @app.get("/customers")
 def get_customers(db: Session = Depends(get_db)):
     return db.query(models.Customer).all()
@@ -91,3 +99,78 @@ def delete_customer(
     db.commit()
 
     return {"message": "Customer has been deleted!"}
+
+
+
+
+
+# --------------------------------------
+# Company Endpoints
+#---------------------------------------
+
+@app.get("/companies")
+def get_companies(db: Session = Depends(get_db)):
+    return db.query(models.Company).all()
+
+@app.post("/companies")
+def create_company(company: dict, db: Session = Depends(get_db)):
+    new_company = models.Company(
+        name=company["name"],
+        industry=company.get("industry"),
+        website=company.get("website")
+
+    )
+
+    db.add(new_company)
+    db.commit()
+    db.refresh(new_company)
+
+    return new_company
+
+@app.get("/companies/{company_id}")
+def get_company(company_id: int, db: Session = Depends(get_db)):
+    company = db.query(models.Company).filter(
+        models.Company.id == company_id
+    ).first()
+
+    return company 
+
+
+@app.patch("/companies/{company_id}")
+def update_company(
+    company_id: int,
+    updated_company: dict,
+    db: Session = Depends(get_db)
+):
+    company = db.query(models.Company).filter(
+        models.Company.id == company_id
+    ).first()
+
+    if "name" in updated_company:
+        company.name = updated_company["name"]
+
+    if "industry" in updated_company:
+        company.industry = updated_company["industry"]
+
+    if "website" in updated_company:
+        company.website = updated_company["website"]
+
+    db.commit()
+    db.refresh(company)
+
+    return company
+
+
+@app.delete("/companies/{company_id}")
+def delete_company(
+    company_id: int,
+    db: Session = Depends(get_db)
+):
+    company = db.query(models.Company).filter(
+        models.Company.id == company_id
+    ).first()
+
+    db.delete(company)
+    db.commit()
+
+    return {"message": "Company has been deleted!!"}
