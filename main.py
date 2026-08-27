@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends, HTTPException
 
 import models 
 from database import engine, SessionLocal
@@ -18,14 +18,8 @@ def get_db():
 
 @app.get("/")
 def home(): 
-    return {"message" : "Sales CRM API is running!!"}
+    return {"message": "Sales CRM API is running!!"}
 
-
-customers =[
-    {"id": 1, "name": "Apple"},
-    {"id": 2, "name": "Microsoft"}
-]
-    
 
 
 
@@ -59,6 +53,12 @@ def get_customer(customer_id: int, db: Session = Depends(get_db)):
         models.Customer.id == customer_id
     ).first()
 
+    if customer is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Customer not found"
+        )
+
     return customer
 
 @app.patch("/customers/{customer_id}")
@@ -70,6 +70,12 @@ def update_customer(
     customer = db.query(models.Customer).filter(
         models.Customer.id == customer_id
     ).first()
+
+    if customer is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Customer not found"
+        )
 
     if "name" in updated_customer:
         customer.name = updated_customer["name"]
@@ -94,6 +100,12 @@ def delete_customer(
     customer = db.query(models.Customer).filter(
         models.Customer.id == customer_id
     ).first()
+
+    if customer is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Customer not found"
+        )
 
     db.delete(customer)
     db.commit()
@@ -133,6 +145,12 @@ def get_company(company_id: int, db: Session = Depends(get_db)):
         models.Company.id == company_id
     ).first()
 
+    if company is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Company not found"
+        )
+
     return company 
 
 
@@ -145,6 +163,12 @@ def update_company(
     company = db.query(models.Company).filter(
         models.Company.id == company_id
     ).first()
+
+    if company is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Company not found"
+        )
 
     if "name" in updated_company:
         company.name = updated_company["name"]
@@ -170,6 +194,12 @@ def delete_company(
         models.Company.id == company_id
     ).first()
 
+    if company is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Company not found"
+        )
+
     db.delete(company)
     db.commit()
 
@@ -178,7 +208,7 @@ def delete_company(
 
 
 # --------------------------------------
-# Company Endpoints
+# Contact Endpoints
 #---------------------------------------
 @app.get("/contacts")
 def get_contacts(db: Session = Depends(get_db)):
@@ -205,6 +235,12 @@ def get_contact(contact_id: int, db: Session = Depends(get_db)):
         models.Contact.id == contact_id
     ).first()
 
+    if contact is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Contact not found"
+        )
+
     return contact
 
 
@@ -218,6 +254,12 @@ def update_contact(
     contact = db.query(models.Contact).filter(
         models.Contact.id == contact_id
     ).first()
+
+    if contact is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Contact not found"
+        )
 
     if "name" in updated_contact:
         contact.name = updated_contact["name"]
@@ -234,3 +276,125 @@ def update_contact(
     return contact
 
 
+@app.delete("/contacts/{contact_id}")
+def delete_contact(
+    contact_id: int,
+    db: Session = Depends(get_db)
+):
+
+    contact = db.query(models.Contact).filter(
+        models.Contact.id == contact_id
+    ).first()
+
+    if contact is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Contact not found"
+        )
+
+    db.delete(contact)
+    db.commit()
+
+    return {"message": "Contact deleted!!"}
+
+
+
+
+# --------------------------------------
+# Opportunity Endpoints
+#---------------------------------------
+@app.get("/opportunities")
+def get_opportunities(db: Session = Depends(get_db)):
+    return db.query(models.Opportunity).all()
+
+
+@app.post("/opportunities")
+def create_opportunity(opportunity: dict, db: Session = Depends(get_db)):
+    new_opportunity = models.Opportunity(
+        name=opportunity["name"],
+        value=opportunity["value"],
+        stage=opportunity["stage"],
+        company_id=opportunity["company_id"]
+    )
+
+    db.add(new_opportunity)
+    db.commit()
+    db.refresh(new_opportunity)
+
+    return new_opportunity
+
+
+@app.get("/opportunities/{opportunity_id}")
+def get_opportunity(
+    opportunity_id: int,
+    db: Session = Depends(get_db)
+):
+    opportunity = db.query(models.Opportunity).filter(
+        models.Opportunity.id == opportunity_id
+    ).first()
+
+    if opportunity is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Opportunity not found"
+        )
+
+    return opportunity
+
+
+@app.patch("/opportunities/{opportunity_id}")
+def update_opportunity(
+    opportunity_id: int,
+    updated_opportunity: dict,
+    db: Session = Depends(get_db)
+):
+    opportunity = db.query(models.Opportunity).filter(
+        models.Opportunity.id == opportunity_id
+    ).first()
+
+    if opportunity is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Opportunity not found"
+        )
+    
+
+
+    if "name" in updated_opportunity:
+        opportunity.name = updated_opportunity["name"]
+
+    if "value" in updated_opportunity:
+        opportunity.value = updated_opportunity["value"]
+
+    if "stage" in updated_opportunity:
+        opportunity.stage = updated_opportunity["stage"]
+
+    if "company_id" in updated_opportunity:
+        opportunity.company_id = updated_opportunity["company_id"]
+
+    db.commit()
+    db.refresh(opportunity)
+
+    return opportunity
+
+
+
+@app.delete("/opportunities/{opportunity_id}")
+def delete_opportunity(
+    opportunity_id: int,
+    db: Session = Depends(get_db)
+):
+    opportunity = db.query(models.Opportunity).filter(
+        models.Opportunity.id == opportunity_id
+    ).first()
+
+    if opportunity is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Opportunity not found"
+        )
+
+    db.delete(opportunity)
+    db.commit()
+
+    return {"message": "Opportunity deleted!!"}

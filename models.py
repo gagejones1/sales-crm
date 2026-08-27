@@ -34,3 +34,17 @@ class Contact(Base):
     name = Column(String, nullable=False)
     email = Column(String, unique=True, nullable=False)
     company_id = Column(Integer, ForeignKey("companies.id"), nullable=False)
+
+
+
+#----------------------------
+#Opportunities Model
+#----------------------------
+class Opportunity(Base):
+    __tablename__ = "opportunities"
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, nullable=False)
+    value = Column(Integer, nullable=False)
+    stage = Column(String, nullable=False)
+    company_id = Column(Integer, ForeignKey("companies.id"), nullable=False)
+
