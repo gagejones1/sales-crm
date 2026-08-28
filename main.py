@@ -1,6 +1,8 @@
 from fastapi import FastAPI, Depends, HTTPException
 
 import models 
+import schemas
+
 from database import engine, SessionLocal
 
 from sqlalchemy.orm import Session 
@@ -33,11 +35,11 @@ def get_customers(db: Session = Depends(get_db)):
     return db.query(models.Customer).all()
 
 @app.post("/customers")
-def create_customer(customer: dict, db: Session = Depends(get_db)):
+def create_customer(customer: schemas.CustomerCreate, db: Session = Depends(get_db)):
     new_customer = models.Customer(
-        name=customer["name"],
-        email=customer["email"],
-        active=customer.get("active", True)
+        name=customer.name,
+        email=customer.email,
+        active=customer.active
     )
 
     db.add(new_customer)
@@ -64,7 +66,7 @@ def get_customer(customer_id: int, db: Session = Depends(get_db)):
 @app.patch("/customers/{customer_id}")
 def update_customer(
     customer_id: int,
-    updated_customer: dict,
+    updated_customer: schemas.CustomerUpdate,
     db: Session = Depends(get_db)
 ):
     customer = db.query(models.Customer).filter(
@@ -77,14 +79,14 @@ def update_customer(
             detail="Customer not found"
         )
 
-    if "name" in updated_customer:
-        customer.name = updated_customer["name"]
+    if updated_customer.name is not None: 
+        customer.name = updated_customer.name
 
-    if "email" in updated_customer:
-        customer.email = updated_customer["email"]
-
-    if "active" in updated_customer:
-        customer.active = updated_customer["active"]
+    if updated_customer.email is not None:
+        customer.email = updated_customer.email
+    
+    if updated_customer.active is not None:
+        customer.active = updated_customer.active
 
     db.commit()
     db.refresh(customer)
@@ -125,11 +127,11 @@ def get_companies(db: Session = Depends(get_db)):
     return db.query(models.Company).all()
 
 @app.post("/companies")
-def create_company(company: dict, db: Session = Depends(get_db)):
+def create_company(company: schemas.CompanyCreate, db: Session = Depends(get_db)):
     new_company = models.Company(
-        name=company["name"],
-        industry=company.get("industry"),
-        website=company.get("website")
+        name=company.name,
+        industry=company.industry,
+        website=company.website
 
     )
 
@@ -157,7 +159,7 @@ def get_company(company_id: int, db: Session = Depends(get_db)):
 @app.patch("/companies/{company_id}")
 def update_company(
     company_id: int,
-    updated_company: dict,
+    updated_company: schemas.CompanyUpdate,
     db: Session = Depends(get_db)
 ):
     company = db.query(models.Company).filter(
@@ -170,14 +172,14 @@ def update_company(
             detail="Company not found"
         )
 
-    if "name" in updated_company:
-        company.name = updated_company["name"]
+    if updated_company.name is not None:
+        company.name = updated_company.name
 
-    if "industry" in updated_company:
-        company.industry = updated_company["industry"]
+    if updated_company.industry is not None:
+        company.industry = updated_company.industry
 
-    if "website" in updated_company:
-        company.website = updated_company["website"]
+    if updated_company.website is not None:
+        company.website = updated_company.website
 
     db.commit()
     db.refresh(company)
@@ -215,11 +217,11 @@ def get_contacts(db: Session = Depends(get_db)):
     return db.query(models.Contact).all()
 
 @app.post("/contacts")
-def create_contact(contact: dict, db: Session = Depends(get_db)):
+def create_contact(contact: schemas.ContactCreate, db: Session = Depends(get_db)):
     new_contact = models.Contact(
-        name=contact["name"],
-        email=contact["email"],
-        company_id=contact["company_id"]
+        name=contact.name,
+        email=contact.email,
+        company_id=contact.company_id
     )
 
     db.add(new_contact)
@@ -247,7 +249,7 @@ def get_contact(contact_id: int, db: Session = Depends(get_db)):
 @app.patch("/contacts/{contact_id}")
 def update_contact(
     contact_id: int,
-    updated_contact: dict,
+    updated_contact: schemas.ContactUpdate,
     db: Session = Depends(get_db)
 ):
 
@@ -261,14 +263,14 @@ def update_contact(
             detail="Contact not found"
         )
 
-    if "name" in updated_contact:
-        contact.name = updated_contact["name"]
+    if updated_contact.name is not None:
+        contact.name = updated_contact.name
 
-    if "email" in updated_contact:
-        contact.email = updated_contact["email"]
+    if updated_contact.email is not None:
+        contact.email = updated_contact.email
 
-    if "company_id" in updated_contact:
-        contact.company_id = updated_contact["company_id"]
+    if updated_contact.company_id is not None:
+        contact.company_id = updated_contact.company_id
 
     db.commit()
     db.refresh(contact)
@@ -309,12 +311,12 @@ def get_opportunities(db: Session = Depends(get_db)):
 
 
 @app.post("/opportunities")
-def create_opportunity(opportunity: dict, db: Session = Depends(get_db)):
+def create_opportunity(opportunity: schemas.OpportunityCreate, db: Session = Depends(get_db)):
     new_opportunity = models.Opportunity(
-        name=opportunity["name"],
-        value=opportunity["value"],
-        stage=opportunity["stage"],
-        company_id=opportunity["company_id"]
+        name=opportunity.name,
+        value=opportunity.value,
+        stage=opportunity.stage,
+        company_id=opportunity.company_id
     )
 
     db.add(new_opportunity)
@@ -345,7 +347,7 @@ def get_opportunity(
 @app.patch("/opportunities/{opportunity_id}")
 def update_opportunity(
     opportunity_id: int,
-    updated_opportunity: dict,
+    updated_opportunity: schemas.OpportunityUpdate,
     db: Session = Depends(get_db)
 ):
     opportunity = db.query(models.Opportunity).filter(
@@ -360,17 +362,17 @@ def update_opportunity(
     
 
 
-    if "name" in updated_opportunity:
-        opportunity.name = updated_opportunity["name"]
+    if updated_opportunity.name is not None:
+        opportunity.name = updated_opportunity.name
 
-    if "value" in updated_opportunity:
-        opportunity.value = updated_opportunity["value"]
+    if updated_opportunity.value is not None:
+        opportunity.value = updated_opportunity.value
 
-    if "stage" in updated_opportunity:
-        opportunity.stage = updated_opportunity["stage"]
-
-    if "company_id" in updated_opportunity:
-        opportunity.company_id = updated_opportunity["company_id"]
+    if updated_opportunity.stage is not None:
+        opportunity.stage = updated_opportunity.stage
+    
+    if updated_opportunity.company_id is not None:
+        opportunity.company_id = updated_opportunity.company_id
 
     db.commit()
     db.refresh(opportunity)
