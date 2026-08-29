@@ -1,14 +1,21 @@
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import FastAPI
+
+from fastapi.middleware.cors import CORSMiddleware
 
 import models 
-import schemas
-from database import engine, SessionLocal
-
-from sqlalchemy.orm import Session 
+from database import engine
 
 from routers import customers, companies, contacts, opportunities
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 app.include_router(customers.router)
 app.include_router(companies.router)
