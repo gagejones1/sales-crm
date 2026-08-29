@@ -17,13 +17,6 @@ app.include_router(opportunities.router)
 
 models.Base.metadata.create_all(bind=engine)
 
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
 @app.get("/")
 def home(): 
     return {"message": "Sales CRM API is running!!"}

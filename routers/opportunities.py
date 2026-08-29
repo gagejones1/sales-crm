@@ -3,21 +3,13 @@ from sqlalchemy.orm import Session
 
 import models
 import schemas
-from database import SessionLocal
+from database import get_db
 
 router=APIRouter(
     prefix="/opportunities",
     tags=["Opportunities"]
 )
 
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
-    
 #-------------------------------
 #Get Opportunities Router
 #-------------------------------

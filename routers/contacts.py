@@ -3,20 +3,12 @@ from sqlalchemy.orm import Session
 
 import models
 import schemas
-from database import SessionLocal
+from database import get_db
 
 router = APIRouter(
     prefix="/contacts",
     tags=["Contacts"]
 )
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
 
 #-------------------------------
 #Get Contacts Router
@@ -95,7 +87,7 @@ def update_contact(
             detail="Contact not found"
         )
 
-    if updated_contact.name is None:
+    if updated_contact.name is not None:
         contact.name = updated_contact.name
     
     if updated_contact.email is not None:
@@ -111,7 +103,7 @@ def update_contact(
 
 
 #-------------------------------
-#Delte Contact Router
+#Delete Contact Router
 #-------------------------------
 @router.delete("/{contact_id}")
 def delete_contact(

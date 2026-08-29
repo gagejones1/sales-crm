@@ -3,19 +3,12 @@ from sqlalchemy.orm import Session
 
 import models
 import schemas
-from database import SessionLocal
+from database import get_db
 
 router = APIRouter(
     prefix="/customers",
     tags=["Customers"]
 )
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
 
 #-------------------------------
@@ -101,11 +94,14 @@ def update_customer(
     if updated_customer.email is not None:
         customer.email = updated_customer.email
 
+    if updated_customer.active is not None:
+        customer.active = updated_customer.active
+
     db.commit()
     db.refresh(customer)
 
     return customer 
-    
+
 
 #-------------------------------
 #Delete Customers Router
