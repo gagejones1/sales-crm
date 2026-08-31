@@ -6,6 +6,7 @@ function Customers() {
     const [email, setEmail] = useState('')
     const [active, setActive] = useState(true)
     const [editingCustomer, setEditingCustomer] = useState(null)
+    const [search, setSearch] = useState('')
 
     useEffect(() => {
         fetch('http://127.0.0.1:8001/customers/')
@@ -97,9 +98,21 @@ function Customers() {
         })
      }
 
+     const filteredCustomers = customers.filter(customer =>
+        customer.name.toLowerCase().includes(search.toLowerCase()) ||
+        customer.email.toLowerCase().includes(search.toLowerCase())
+    )
+
     return (
         <div className="dashboard">
             <h1>Customers</h1>
+
+            <input
+                type="text"
+                placeholder="Search customers..."
+                value={search}
+                onChange={(event) => setSearch(event.target.value)}
+            />
 
             <form onSubmit={editingCustomer ? updateCustomer : addCustomer}>
                 <input
@@ -156,7 +169,7 @@ function Customers() {
                 </thead>
 
                 <tbody>
-                    {customers.map(customer => (
+                    {filteredCustomers.map(customer => (
                         <tr key={customer.id}>
                             <td>{customer.id}</td>
                             <td>{customer.name}</td>

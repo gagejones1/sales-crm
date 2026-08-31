@@ -6,11 +6,17 @@ function Contacts() {
     const [email, setEmail] = useState('')
     const [companyID, setCompanyID] = useState('')
     const [editingContact, setEditingContact] = useState(null)
+    const [companies, setCompanies] = useState([])
+    const [search, setSearch] = useState('')
 
     useEffect(() => {
         fetch('http://127.0.0.1:8001/contacts/')
         .then(response => response.json())
         .then(data => setContacts(data))
+
+        fetch('http://127.0.0.1:8001/companies/')
+        .then(response => response.json())
+        .then(data => setCompanies(data))
     }, [])
 
     const addContact = (event) => {
@@ -98,9 +104,21 @@ function Contacts() {
         })
     }
 
+    const filteredContacts = contacts.filter(contact =>
+        contact.name.toLowerCase().includes(search.toLowerCase()) ||
+        contact.email.toLowerCase().includes(search.toLowerCase())
+    )
+
     return (
         <div className="dashboard">
             <h1>Contacts</h1>
+
+            <input
+                type="text"
+                placeholder="Search contacts..."
+                value={search}
+                onChange={(event) => setSearch(event.target.value)}
+            />
 
             <form onSubmit={editingContact ? updateContact: addContact}>
                 <input
@@ -117,12 +135,18 @@ function Contacts() {
                     onChange={(event) => setEmail(event.target.value)}
                 />
 
-                <input
-                    type="number"
-                    placeholder="Company ID"
+               <select
                     value={companyID}
                     onChange={(event) => setCompanyID(event.target.value)}
-                />
+                >
+                    <option value="">Select Company</option>
+
+                    {companies.map(company => (
+                        <option key={company.id} value={company.id}>
+                            {company.name}
+                        </option>
+                    ))}
+                </select>
 
                 <button type="submit">
                     {editingContact ? 'Update Contact' : 'Add Contact'}
@@ -149,18 +173,20 @@ function Contacts() {
             <th>ID</th>
             <th>Name</th>
             <th>Email</th>
-            <th>Company ID</th>
+            <th>Company</th>
             <th>Actions</th>
         </tr>
     </thead>
 
     <tbody>
-        {contacts.map(contact => (
+        {filteredContacts.map(contact => (
             <tr key={contact.id}>
                 <td>{contact.id}</td>
                 <td>{contact.name}</td>
                 <td>{contact.email}</td>
-                <td>{contact.company_id}</td>
+                <td>
+                    {companies.find(company => company.id === contact.company_id)?.name}
+                </td>
                 <td>
                     <button
                         onClick={() => {

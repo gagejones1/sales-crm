@@ -26,6 +26,11 @@ function Dashboard() {
             .then(data => setOpportunities(data))
     }, [])
 
+    const totalPipeline = opportunities.reduce(
+        (total, opportunity) => total + opportunity.value,
+        0
+    )
+
     return (
         <div className="dashboard">
             <h1>Sales CRM Dashboard</h1>
@@ -60,7 +65,11 @@ function Dashboard() {
                 </div>
             </Link>
 
-            </div>
+                <div className="card">
+                    <h2>Total Pipeline</h2>
+                    <p>${totalPipeline.toLocaleString()}</p>
+                    </div>
+                </div>
         </div>
     )
 }

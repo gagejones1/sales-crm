@@ -7,11 +7,18 @@ function Opportunities() {
     const [stage, setStage] = useState('')
     const [companyID, setCompanyID] = useState('')
     const [editingOpportunity, setEditingOpportunity] = useState(null)
+    const [companies, setCompanies] = useState([])
+    const [search, setSearch] = useState('')
+    const [stageFilter, setStageFilter] = useState('')
 
     useEffect(() => {
         fetch('http://127.0.0.1:8001/opportunities/')
         .then(response => response.json())
         .then(data => setOpportunities(data))
+
+        fetch('http://127.0.0.1:8001/companies/')
+        .then(response => response.json())
+        .then(data => setCompanies(data))
     }, [])
 
     const addOpportunity = (event) => {
@@ -103,9 +110,42 @@ function Opportunities() {
     })
     }
 
+    const filteredOpportunities = opportunities.filter(opportunity => {
+    const companyName =
+        companies.find(company => company.id === opportunity.company_id)?.name || ''
+
+    const matchesSearch =
+        opportunity.name.toLowerCase().includes(search.toLowerCase()) ||
+        companyName.toLowerCase().includes(search.toLowerCase())
+
+    const matchesStage =
+        stageFilter === '' || opportunity.stage === stageFilter
+
+    return matchesSearch && matchesStage
+})
+
     return (
         <div className="dashboard">
             <h1>Opportunities</h1>
+
+            <input
+                type="text"
+                placeholder="Search opportunities..."
+                value={search}
+                onChange={(event) => setSearch(event.target.value)}
+            />
+
+            <select
+                value={stageFilter}
+                onChange={(event) => setStageFilter(event.target.value)}
+            >
+                <option value="">All Stages</option>
+                <option value="Lead">Lead</option>
+                <option value="Qualified">Qualified</option>
+                <option value="Proposal">Proposal</option>
+                <option value="Won">Won</option>
+                <option value="Lost">Lost</option>
+            </select>
 
             <form onSubmit={editingOpportunity ? updateOpportunity : addOpportunity}>
                 <input
@@ -122,19 +162,30 @@ function Opportunities() {
                     onChange={(event) => setValue(event.target.value)}
                 />
 
-                  <input
-                    type="text"
-                    placeholder="Stage"
+                <select
                     value={stage}
                     onChange={(event) => setStage(event.target.value)}
-                />
+                >
+                    <option value="">Select Stage</option>
+                    <option value="Lead">Lead</option>
+                    <option value="Qualified">Qualified</option>
+                    <option value="Proposal">Proposal</option>
+                    <option value="Won">Won</option>
+                    <option value="Lost">Lost</option>
+                </select>
 
-                  <input
-                    type="number"
-                    placeholder="Company ID"
+                <select
                     value={companyID}
                     onChange={(event) => setCompanyID(event.target.value)}
-                />
+                >
+                    <option value="">Select Company</option>
+
+                    {companies.map(company => (
+                        <option key={company.id} value={company.id}>
+                            {company.name}
+                        </option>
+                    ))}
+                </select>
 
                     <button type="submit">
                         {editingOpportunity ? 'Update Opportunity' : 'Add Opportunity'}
@@ -162,19 +213,21 @@ function Opportunities() {
             <th>Name</th>
             <th>Value</th>
             <th>Stage</th>
-            <th>Company ID</th>
+            <th>Company</th>
             <th>Actions</th>
         </tr>
     </thead>
 
     <tbody>
-        {opportunities.map(opportunity => (
+        {filteredOpportunities.map(opportunity => (
             <tr key={opportunity.id}>
                 <td>{opportunity.id}</td>
                 <td>{opportunity.name}</td>
-                <td>{opportunity.value}</td>
+                <td>${opportunity.value.toLocaleString()}
+                </td>
                 <td>{opportunity.stage}</td>
-                <td>{opportunity.company_id}</td>
+                <td>{companies.find(company => company.id === opportunity.company_id)?.name}
+                </td>
                 <td>
             <button
                 onClick={() => {

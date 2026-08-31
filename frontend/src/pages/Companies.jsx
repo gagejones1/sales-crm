@@ -6,6 +6,7 @@ function Companies() {
     const [industry, setIndustry] = useState('')
     const [website, setWebsite] = useState('')
     const [editingCompany, setEditingCompany] = useState(null)
+    const [search, setSearch] = useState('')
 
     useEffect(() => {
         fetch('http://127.0.0.1:8001/companies/')
@@ -99,9 +100,22 @@ function Companies() {
 })
     }
 
+     const filteredCompanies = companies.filter(company =>
+        company.name.toLowerCase().includes(search.toLowerCase()) ||
+        (company.industry || '').toLowerCase().includes(search.toLowerCase()) ||
+        (company.website || '').toLowerCase().includes(search.toLowerCase())
+    )
+
     return (
         <div className="dashboard">
             <h1>Companies</h1>
+
+            <input
+                type="text"
+                placeholder="Search companies..."
+                value={search}
+                onChange={(event) => setSearch(event.target.value)}
+            />
 
             <form onSubmit={editingCompany ? updateCompany : addCompany}>
                 <input
@@ -118,7 +132,7 @@ function Companies() {
                     onChange={(event) => setIndustry(event.target.value)}
                 />
 
-                <input
+               <input
                     type="text"
                     placeholder="Website"
                     value={website}
@@ -156,7 +170,7 @@ function Companies() {
                 </thead>
 
                 <tbody>
-                    {companies.map(company => (
+                    {filteredCompanies.map(company => (
                         <tr key={company.id}>
                             <td>{company.id}</td>
                             <td>{company.name}</td>
