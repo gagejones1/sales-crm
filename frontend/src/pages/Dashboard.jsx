@@ -39,20 +39,26 @@ function Dashboard() {
                     </div>
                 </Link>
 
-                <div className="card">
-                    <h2>Companies</h2>
-                    <p>{companies.length}</p>
-                </div>
+                <Link to="/companies" className="card-link">
+                    <div className="card">
+                        <h2>Companies</h2>
+                        <p>{companies.length}</p>
+                    </div>
+                </Link>
 
-                <div className="card">
-                    <h2>Contacts</h2>
-                    <p>{contacts.length}</p>
-                </div>
+                <Link to="/contacts" className="card-link">
+                     <div className="card">
+                       <h2>Contacts</h2>
+                       <p>{contacts.length}</p>
+                   </div>
+                </Link>
 
+            <Link to="/opportunities" className="card-link">
                 <div className="card">
                     <h2>Opportunities</h2>
                     <p>{opportunities.length}</p>
                 </div>
+            </Link>
 
             </div>
         </div>

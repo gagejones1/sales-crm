@@ -4,13 +4,13 @@ from pydantic import BaseModel, EmailStr
 #Customer schemas
 #------------------------------
 class CustomerCreate(BaseModel):
-    name: EmailStr 
-    email: str
+    name: str 
+    email: EmailStr
     active: bool = True
 
 class CustomerUpdate(BaseModel):
-    name: EmailStr | None = None
-    email: str | None = None
+    name: str | None = None
+    email: EmailStr | None = None
     active: bool | None = None
 
 #------------------------------
