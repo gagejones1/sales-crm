@@ -4,6 +4,12 @@ A full-stack Customer Relationship Management (CRM) application for managing cus
 
 The application includes a React frontend connected to a FastAPI backend and PostgreSQL database. It supports creating, viewing, updating, deleting, searching, and filtering CRM data through a web interface.
 
+## Live Demo
+
+[View the Live Sales CRM](https://sales-crm-r2tz.onrender.com)
+
+> Note: The backend is hosted on Render's free tier and may take up to a minute to wake up after a period of inactivity.
+
 ## Features
 
 - Customer management
