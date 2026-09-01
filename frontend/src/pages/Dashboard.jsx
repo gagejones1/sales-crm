@@ -7,21 +7,22 @@ function Dashboard() {
     const [companies, setCompanies] = useState([])
     const [contacts, setContacts] = useState([])
     const [opportunities, setOpportunities] = useState([])
+    const API_URL = import.meta.env.VITE_API_URL
 
     useEffect(() => {
-        fetch('http://127.0.0.1:8001/customers/')
+        fetch(`${API_URL}/customers/`)
             .then(response => response.json())
             .then(data => setCustomers(data))
 
-        fetch('http://127.0.0.1:8001/companies/')
+        fetch(`${API_URL}/companies/`)
             .then(response => response.json())
             .then(data => setCompanies(data))
 
-        fetch('http://127.0.0.1:8001/contacts/')
+        fetch(`${API_URL}/contacts/`)
             .then(response => response.json())
             .then(data => setContacts(data))
 
-        fetch('http://127.0.0.1:8001/opportunities/')
+        fetch(`${API_URL}/opportunities/`)
             .then(response => response.json())
             .then(data => setOpportunities(data))
     }, [])

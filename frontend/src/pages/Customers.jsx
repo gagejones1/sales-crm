@@ -8,9 +8,10 @@ function Customers() {
     const [editingCustomer, setEditingCustomer] = useState(null)
     const [search, setSearch] = useState('')
     const [error, setError] = useState('')
+    const API_URL = import.meta.env.VITE_API_URL
 
     useEffect(() => {
-        fetch('http://127.0.0.1:8001/customers/')
+        fetch(`${API_URL}/customers/`)
         .then(response => response.json())
         .then(data => setCustomers(data))
     }, [])
@@ -18,7 +19,7 @@ function Customers() {
     const addCustomer = (event) => {
         event.preventDefault()
 
-        fetch('http://127.0.0.1:8001/customers/', {
+        fetch(`${API_URL}/customers/`, {
             method: 'POST',
             headers: { 
                 'Content-Type': 'application/json'
@@ -49,7 +50,7 @@ function Customers() {
      }
 
      const deleteCustomer = (customerID) => {
-        fetch(`http://127.0.0.1:8001/customers/${customerID}`, {
+        fetch(`${API_URL}/customers/${customerID}`, {
             method: 'DELETE'
         })
         .then(response => {
@@ -68,7 +69,7 @@ function Customers() {
      const updateCustomer = (event) => {
         event.preventDefault()
 
-        fetch(`http://127.0.0.1:8001/customers/${editingCustomer.id}`, {
+        fetch(`${API_URL}/customers/${editingCustomer.id}`, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json'

@@ -8,9 +8,10 @@ function Companies() {
     const [editingCompany, setEditingCompany] = useState(null)
     const [search, setSearch] = useState('')
     const [error, setError] = useState('')
+    const API_URL = import.meta.env.VITE_API_URL
 
     useEffect(() => {
-        fetch('http://127.0.0.1:8001/companies/')
+        fetch(`${API_URL}/companies/`)
         .then(response => response.json())
         .then(data => setCompanies(data))
     }, [])
@@ -18,7 +19,7 @@ function Companies() {
     const addCompany = (event) => {
         event.preventDefault()
 
-        fetch('http://127.0.0.1:8001/companies/', {
+        fetch(`${API_URL}/companies/`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -49,7 +50,7 @@ function Companies() {
     }
 
     const deleteCompany = (companyID) => {
-    fetch(`http://127.0.0.1:8001/companies/${companyID}`, {
+    fetch(`${API_URL}/companies/${companyID}`, {
         method: 'DELETE'
     })
     .then(response => {
@@ -66,7 +67,7 @@ function Companies() {
     const updateCompany = (event) => {
         event.preventDefault()
 
-        fetch(`http://127.0.0.1:8001/companies/${editingCompany.id}`, {
+        fetch(`${API_URL}/companies/${editingCompany.id}`, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json'
@@ -99,6 +100,7 @@ function Companies() {
 })
 .catch(error => {
     console.error(error)
+    setError(error.message)
 })
     }
 

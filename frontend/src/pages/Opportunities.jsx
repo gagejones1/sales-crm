@@ -11,13 +11,14 @@ function Opportunities() {
     const [search, setSearch] = useState('')
     const [stageFilter, setStageFilter] = useState('')
     const [error, setError] = useState('')
+    const API_URL = import.meta.env.VITE_API_URL
 
     useEffect(() => {
-        fetch('http://127.0.0.1:8001/opportunities/')
+        fetch(`${API_URL}/opportunities/`)
         .then(response => response.json())
         .then(data => setOpportunities(data))
 
-        fetch('http://127.0.0.1:8001/companies/')
+        fetch(`${API_URL}/companies/`)
         .then(response => response.json())
         .then(data => setCompanies(data))
     }, [])
@@ -25,7 +26,7 @@ function Opportunities() {
     const addOpportunity = (event) => {
         event.preventDefault()
 
-        fetch('http://127.0.0.1:8001/opportunities/', {
+        fetch(`${API_URL}/opportunities/`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -58,7 +59,7 @@ function Opportunities() {
     }
 
     const deleteOpportunity = (opportunityID) => {
-    fetch(`http://127.0.0.1:8001/opportunities/${opportunityID}`, {
+    fetch(`${API_URL}/opportunities/${opportunityID}`, {
         method: 'DELETE'
     })
     .then(response => {
@@ -75,7 +76,7 @@ function Opportunities() {
     const updateOpportunity = (event) => {
     event.preventDefault()
 
-    fetch(`http://127.0.0.1:8001/opportunities/${editingOpportunity.id}`, {
+    fetch(`${API_URL}/opportunities/${editingOpportunity.id}`, {
         method: 'PATCH',
         headers: {
             'Content-Type': 'application/json'
