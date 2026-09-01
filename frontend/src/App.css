@@ -161,3 +161,23 @@ button[type="button"] {
 td button {
   margin-right: 8px;
 }
+
+
+
+td button:first-of-type {
+  background: #e5e7eb;
+  color: #111827;
+}
+
+td button:first-of-type:hover {
+  background: #d1d5db;
+}
+
+td button:last-of-type {
+  background: #dc2626;
+  color: white;
+}
+
+td button:last-of-type:hover {
+  background: #b91c1c;
+}

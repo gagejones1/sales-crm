@@ -7,6 +7,7 @@ function Customers() {
     const [active, setActive] = useState(true)
     const [editingCustomer, setEditingCustomer] = useState(null)
     const [search, setSearch] = useState('')
+    const [error, setError] = useState('')
 
     useEffect(() => {
         fetch('http://127.0.0.1:8001/customers/')
@@ -43,6 +44,7 @@ function Customers() {
         })
         .catch(error => {
             console.error(error)
+            setError(error.message)
         })
      }
 
@@ -56,6 +58,10 @@ function Customers() {
             }
 
             setCustomers(customers.filter(customer => customer.id !== customerID))
+        })
+        .catch(error => {
+            console.error(error)
+            setError(error.message)
         })
      }
 
@@ -95,6 +101,7 @@ function Customers() {
         })
         .catch(error => {
             console.error(error)
+            setError(error.message)
         })
      }
 
@@ -106,6 +113,8 @@ function Customers() {
     return (
         <div className="dashboard">
             <h1>Customers</h1>
+
+            {error && <p>{error}</p>}
 
             <input
                 type="text"
@@ -120,6 +129,7 @@ function Customers() {
                     placeholder="Name"
                     value={name}
                     onChange={(event) => setName(event.target.value)}
+                    required
                 />
 
                 <input
@@ -127,6 +137,7 @@ function Customers() {
                     placeholder="Email"
                     value={email}
                     onChange={(event) => setEmail(event.target.value)}
+                    required
                 />
 
                 <label>
@@ -169,6 +180,12 @@ function Customers() {
                 </thead>
 
                 <tbody>
+                    {filteredCustomers.length === 0 && (
+                        <tr>
+                            <td colSpan="5">No customers found.</td>
+                        </tr>
+                    )}
+
                     {filteredCustomers.map(customer => (
                         <tr key={customer.id}>
                             <td>{customer.id}</td>

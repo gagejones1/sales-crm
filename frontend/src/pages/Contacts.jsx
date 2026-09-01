@@ -8,6 +8,7 @@ function Contacts() {
     const [editingContact, setEditingContact] = useState(null)
     const [companies, setCompanies] = useState([])
     const [search, setSearch] = useState('')
+    const [error, setError] = useState('')
 
     useEffect(() => {
         fetch('http://127.0.0.1:8001/contacts/')
@@ -48,6 +49,7 @@ function Contacts() {
         })
         .catch(error => {
             console.error(error)
+            setError(error.message)
         })
     }
 
@@ -113,6 +115,8 @@ function Contacts() {
         <div className="dashboard">
             <h1>Contacts</h1>
 
+            {error && <p>{error}</p>}
+
             <input
                 type="text"
                 placeholder="Search contacts..."
@@ -126,6 +130,7 @@ function Contacts() {
                     placeholder="Name"
                     value={name}
                     onChange={(event) => setName(event.target.value)}
+                    required
                 />
 
                 <input
@@ -133,11 +138,13 @@ function Contacts() {
                     placeholder="Email"
                     value={email}
                     onChange={(event) => setEmail(event.target.value)}
+                    required
                 />
 
                <select
                     value={companyID}
                     onChange={(event) => setCompanyID(event.target.value)}
+                    required
                 >
                     <option value="">Select Company</option>
 
@@ -179,6 +186,12 @@ function Contacts() {
     </thead>
 
     <tbody>
+        {filteredContacts.length === 0 && (
+            <tr>
+                <td colSpan="5">No contacts found.</td>
+            </tr>
+        )}
+
         {filteredContacts.map(contact => (
             <tr key={contact.id}>
                 <td>{contact.id}</td>

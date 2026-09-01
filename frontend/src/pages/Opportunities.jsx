@@ -10,6 +10,7 @@ function Opportunities() {
     const [companies, setCompanies] = useState([])
     const [search, setSearch] = useState('')
     const [stageFilter, setStageFilter] = useState('')
+    const [error, setError] = useState('')
 
     useEffect(() => {
         fetch('http://127.0.0.1:8001/opportunities/')
@@ -52,6 +53,7 @@ function Opportunities() {
         })
         .catch(error => {
             console.error(error)
+            setError(error.message)
         })
     }
 
@@ -128,6 +130,8 @@ function Opportunities() {
         <div className="dashboard">
             <h1>Opportunities</h1>
 
+            {error && <p>{error}</p>}
+
             <input
                 type="text"
                 placeholder="Search opportunities..."
@@ -153,6 +157,7 @@ function Opportunities() {
                     placeholder="Name"
                     value={name}
                     onChange={(event) => setName(event.target.value)}
+                    required
                 />
 
                  <input
@@ -160,11 +165,13 @@ function Opportunities() {
                     placeholder="Value"
                     value={value}
                     onChange={(event) => setValue(event.target.value)}
+                    required
                 />
 
                 <select
                     value={stage}
                     onChange={(event) => setStage(event.target.value)}
+                    required
                 >
                     <option value="">Select Stage</option>
                     <option value="Lead">Lead</option>
@@ -177,6 +184,7 @@ function Opportunities() {
                 <select
                     value={companyID}
                     onChange={(event) => setCompanyID(event.target.value)}
+                    required
                 >
                     <option value="">Select Company</option>
 
@@ -219,6 +227,12 @@ function Opportunities() {
     </thead>
 
     <tbody>
+        {filteredOpportunities.length === 0 && (
+            <tr>
+                <td colSpan="6">No opportunities found.</td>
+            </tr>
+        )}
+
         {filteredOpportunities.map(opportunity => (
             <tr key={opportunity.id}>
                 <td>{opportunity.id}</td>

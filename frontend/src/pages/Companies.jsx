@@ -7,6 +7,7 @@ function Companies() {
     const [website, setWebsite] = useState('')
     const [editingCompany, setEditingCompany] = useState(null)
     const [search, setSearch] = useState('')
+    const [error, setError] = useState('')
 
     useEffect(() => {
         fetch('http://127.0.0.1:8001/companies/')
@@ -43,6 +44,7 @@ function Companies() {
         })
         .catch(error => {
             console.error(error)
+            setError(error.message)
         })
     }
 
@@ -110,6 +112,8 @@ function Companies() {
         <div className="dashboard">
             <h1>Companies</h1>
 
+            {error && <p>{error}</p>}
+
             <input
                 type="text"
                 placeholder="Search companies..."
@@ -170,6 +174,12 @@ function Companies() {
                 </thead>
 
                 <tbody>
+                    {filteredCompanies.length === 0 && (
+                        <tr>
+                            <td colSpan="5">No companies found.</td>
+                        </tr>
+                    )}
+
                     {filteredCompanies.map(company => (
                         <tr key={company.id}>
                             <td>{company.id}</td>
